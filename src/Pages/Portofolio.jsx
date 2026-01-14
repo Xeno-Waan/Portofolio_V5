@@ -101,9 +101,9 @@ function a11yProps(index) {
 // techStacks tetap sama
 const techStacks = [
   { icon: "html.svg", language: "HTML" },
-  { icon: "css.svg", language: "CSS" }
+  { icon: "css.svg", language: "CSS" },
+  { icon: "javascript.svg", language: "JavaScript" },
   { icon: "reactjs.svg", language: "ReactJS" },
-  { icon: "vite.svg", language: "Vite" },
   { icon: "nodejs.svg", language: "Node JS" },
   { icon: "bootstrap.svg", language: "Bootstrap" },
   { icon: "vercel.svg", language: "Vercel" },
