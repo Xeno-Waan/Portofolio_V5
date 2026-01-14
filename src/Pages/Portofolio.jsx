@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-
 import { supabase } from "../supabase"; 
-
 import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
 import { useTheme } from "@mui/material/styles";
@@ -16,7 +14,6 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import Certificate from "../components/Certificate";
 import { Code, Award, Boxes } from "lucide-react";
-
 
 const ToggleButton = ({ onClick, isShowingMore }) => (
   <button
@@ -70,7 +67,6 @@ const ToggleButton = ({ onClick, isShowingMore }) => (
   </button>
 );
 
-
 function TabPanel({ children, value, index, ...other }) {
   return (
     <div
@@ -118,10 +114,35 @@ const techStacks = [
   { icon: "SweetAlert.svg", language: "SweetAlert2" },
 ];
 
+// Data proyek default yang akan ditampilkan jika Supabase tidak tersedia
+const defaultProjects = [
+  {
+    id: 1,
+    Img: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+    Title: "Sistem Pendaftaran Online SMA Ibnuaqil",
+    Description: "Sistem pendaftaran online untuk SMA Ibnuaqil yang memudahkan calon siswa dalam proses pendaftaran secara digital dengan fitur lengkap seperti pengisian formulir online, upload berkas, dan tracking status pendaftaran.",
+    Link: "https://smaibnuaqil.my.id"
+  },
+  {
+    id: 2,
+    Img: "https://images.unsplash.com/photo-1490818387583-1baba5e638af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+    Title: "NutriKalku - Kalkulator Nilai Gizi Resep Makanan",
+    Description: "Aplikasi web untuk menghitung nilai gizi dari resep makanan. Pengguna dapat memasukkan bahan makanan beserta gram-nya, dan sistem akan menghitung total nilai gizi seperti kalori, protein, karbohidrat, dan lemak.",
+    Link: "https://nutrikalku.my.id"
+  },
+  {
+    id: 3,
+    Img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+    Title: "XenoFrame - Pencari Foto Terbaik dalam Video",
+    Description: "Website untuk mencari frame/foto terbaik di dalam video. XenoFrame menganalisis video dan mengidentifikasi frame dengan kualitas visual terbaik berdasarkan komposisi, ketajaman, dan estetika. Link: https://xeno-waan.github.io/Xeno---Frame/",
+    Link: "https://xeno-waan.github.io/Xeno---Frame/"
+  }
+];
+
 export default function FullWidthTabs() {
   const theme = useTheme();
   const [value, setValue] = useState(0);
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState(defaultProjects); // Menggunakan defaultProjects sebagai initial state
   const [certificates, setCertificates] = useState([]);
   const [showAllProjects, setShowAllProjects] = useState(false);
   const [showAllCertificates, setShowAllCertificates] = useState(false);
@@ -133,7 +154,6 @@ export default function FullWidthTabs() {
       once: false,
     });
   }, []);
-
 
   const fetchData = useCallback(async () => {
     try {
@@ -151,27 +171,34 @@ export default function FullWidthTabs() {
       const projectData = projectsResponse.data || [];
       const certificateData = certificatesResponse.data || [];
 
-      setProjects(projectData);
+      // Gabungkan data default dengan data dari Supabase
+      // Jika ada data dari Supabase, gunakan itu. Jika tidak, gunakan data default
+      const finalProjectData = projectData.length > 0 ? projectData : defaultProjects;
+      
+      setProjects(finalProjectData);
       setCertificates(certificateData);
 
       // Store in localStorage (fungsionalitas ini tetap dipertahankan)
-      localStorage.setItem("projects", JSON.stringify(projectData));
+      localStorage.setItem("projects", JSON.stringify(finalProjectData));
       localStorage.setItem("certificates", JSON.stringify(certificateData));
     } catch (error) {
       console.error("Error fetching data from Supabase:", error.message);
+      // Jika terjadi error, tetap gunakan data default
+      setProjects(defaultProjects);
     }
   }, []);
 
-
-
   useEffect(() => {
-    // Coba ambil dari localStorage dulu untuk laod lebih cepat
+    // Coba ambil dari localStorage dulu untuk load lebih cepat
     const cachedProjects = localStorage.getItem('projects');
     const cachedCertificates = localStorage.getItem('certificates');
 
     if (cachedProjects && cachedCertificates) {
         setProjects(JSON.parse(cachedProjects));
         setCertificates(JSON.parse(cachedCertificates));
+    } else {
+      // Jika tidak ada di cache, gunakan data default
+      setProjects(defaultProjects);
     }
     
     fetchData(); // Tetap panggil fetchData untuk sinkronisasi data terbaru
@@ -192,7 +219,6 @@ export default function FullWidthTabs() {
   const displayedProjects = showAllProjects ? projects : projects.slice(0, initialItems);
   const displayedCertificates = showAllCertificates ? certificates : certificates.slice(0, initialItems);
 
-  // Sisa dari komponen (return statement) tidak ada perubahan
   return (
     <div className="md:px-[10%] px-[5%] w-full sm:mt-0 mt-[3rem] bg-[#030014] overflow-hidden" id="Portofolio">
       {/* Header section - unchanged */}
